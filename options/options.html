@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RenameTab Options</title>
+    <link rel="stylesheet" href="options.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="../assets/icon48.png" alt="" width="48" height="48">
+        <div>
+          <h1>RenameTab</h1>
+          <p>Default behavior for renamed tabs.</p>
+        </div>
+      </header>
+
+      <section aria-labelledby="strategy-heading">
+        <h2 id="strategy-heading">Refresh strategy</h2>
+        <label>
+          <input type="radio" name="strategy" value="tab_lifetime">
+          <span>
+            <strong>Keep while tab stays open</strong>
+            <small>Reloads and navigations in the same tab reuse the custom title.</small>
+          </span>
+        </label>
+        <label>
+          <input type="radio" name="strategy" value="same_url">
+          <span>
+            <strong>Keep while URL is unchanged</strong>
+            <small>Reloading the same URL keeps the title; a new URL clears it.</small>
+          </span>
+        </label>
+        <label>
+          <input type="radio" name="strategy" value="until_refresh">
+          <span>
+            <strong>Restore after refresh</strong>
+            <small>The custom title applies only to the current page load.</small>
+          </span>
+        </label>
+      </section>
+
+      <button id="shortcuts" type="button">Open Chrome shortcut settings</button>
+      <p id="status" role="status"></p>
+    </main>
+    <script src="../src/policy.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

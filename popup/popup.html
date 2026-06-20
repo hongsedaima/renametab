@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RenameTab</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="../assets/icon32.png" alt="" width="32" height="32">
+        <div>
+          <h1>RenameTab</h1>
+          <p id="tab-title">Current tab</p>
+        </div>
+      </header>
+
+      <label for="strategy">Refresh strategy</label>
+      <select id="strategy">
+        <option value="tab_lifetime">Keep while tab stays open</option>
+        <option value="same_url">Keep while URL is unchanged</option>
+        <option value="until_refresh">Restore after refresh</option>
+      </select>
+
+      <button id="rename" type="button">Rename current tab</button>
+
+      <footer>
+        <button id="shortcuts" type="button">Shortcut settings</button>
+        <span id="status" role="status"></span>
+      </footer>
+    </main>
+    <script src="../src/policy.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

@@ -4,6 +4,7 @@
   const strategy = document.getElementById('strategy');
   const openRenamer = document.getElementById('open-renamer');
   const shortcuts = document.getElementById('shortcuts');
+  const shortcutText = document.getElementById('shortcut');
   const status = document.getElementById('status');
   const tabTitle = document.getElementById('tab-title');
 
@@ -43,6 +44,16 @@
     titleInput.focus();
   }
 
+  function loadShortcut() {
+    chrome.commands.getAll((commands) => {
+      if (chrome.runtime.lastError) {
+        shortcutText.textContent = '读取失败';
+        return;
+      }
+      shortcutText.textContent = RenameTabShortcut.getCommandShortcutText(commands);
+    });
+  }
+
   strategy.addEventListener('change', saveStrategy);
 
   form.addEventListener('submit', async (event) => {
@@ -79,4 +90,5 @@
   });
 
   load();
+  loadShortcut();
 })();

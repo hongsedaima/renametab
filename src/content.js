@@ -105,8 +105,14 @@
         position: fixed;
         inset: 0;
         z-index: 2147483647;
-        pointer-events: none;
+        pointer-events: auto;
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      .backdrop {
+        position: fixed;
+        inset: 0;
+        background: transparent;
       }
 
       .panel {
@@ -197,6 +203,9 @@
     panel.className = 'panel';
     panel.setAttribute('aria-label', '重命名标签页');
 
+    const backdrop = document.createElement('div');
+    backdrop.className = 'backdrop';
+
     const titleRow = document.createElement('div');
     titleRow.className = 'title-row';
 
@@ -240,8 +249,10 @@
     });
 
     panel.append(titleRow, scope);
-    shadow.append(style, panel);
+    shadow.append(style, backdrop, panel);
     document.documentElement.append(overlayHost);
+
+    backdrop.addEventListener('click', removeOverlay);
 
     panel.addEventListener('submit', (event) => {
       event.preventDefault();

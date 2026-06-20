@@ -46,6 +46,23 @@ form {
   gap: 8px;
 }
 
+.shortcut-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 22px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: #334155;
+  background: #eaf1f8;
+  font-size: 12px;
+}
+
+.shortcut-line strong {
+  color: #0f766e;
+  font-weight: 800;
+}
+
 label {
   color: #334155;
   font-size: 12px;

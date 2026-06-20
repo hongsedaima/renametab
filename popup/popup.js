@@ -40,6 +40,8 @@
       response.settings && response.settings.strategy ? response.settings.strategy : RenameTabPolicy.DEFAULT_STRATEGY,
     );
     tabTitle.textContent = response.tab && response.tab.title ? response.tab.title : '当前标签页';
+    titleInput.value = '';
+    titleInput.placeholder = RenameTabUi.NEW_TITLE_PLACEHOLDER;
     titleInput.focus();
   }
 

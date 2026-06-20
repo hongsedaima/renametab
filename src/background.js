@@ -60,7 +60,7 @@ async function getActiveTab() {
 async function ensureContentScripts(tabId) {
   await chromeCall((done) => chrome.scripting.executeScript({
     target: { tabId },
-    files: ['src/policy.js', 'src/content.js'],
+    files: ['src/policy.js', 'src/ui.js', 'src/content.js'],
   }, done));
 }
 

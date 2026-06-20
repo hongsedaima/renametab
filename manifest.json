@@ -23,6 +23,7 @@
       ],
       "js": [
         "src/policy.js",
+        "src/ui.js",
         "src/content.js"
       ],
       "run_at": "document_idle"

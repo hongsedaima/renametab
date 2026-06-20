@@ -214,8 +214,8 @@
     input.type = 'text';
     input.autocomplete = 'off';
     input.spellcheck = false;
-    input.placeholder = '新 title';
-    input.value = desiredTitle || document.title || '';
+    input.placeholder = RenameTabUi.NEW_TITLE_PLACEHOLDER;
+    input.value = '';
 
     const submit = document.createElement('button');
     submit.className = 'submit';
@@ -269,7 +269,6 @@
 
     requestAnimationFrame(() => {
       input.focus();
-      input.select();
     });
   }
 

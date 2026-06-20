@@ -36,14 +36,30 @@ test('returns same-url state only when the current URL matches', () => {
   assert.equal(state.getReusableTabTitle(states, 42, 'https://mail.test/settings'), null);
 });
 
-test('clears same-url state when a tab navigates away', () => {
-  const states = {
-    42: { title: 'Inbox', url: 'https://mail.test/', strategy: 'same_url' },
-    77: { title: 'Docs', url: 'https://docs.test/', strategy: 'tab_lifetime' },
-  };
+test('keeps same-url state available after navigating away and back', () => {
+  const states = state.saveTabTitle({}, 42, 'Inbox', 'https://mail.test/', 'same_url');
+  const away = state.clearChangedUrlState(states, 42, 'https://mail.test/settings');
 
-  assert.deepEqual(state.clearChangedUrlState(states, 42, 'https://mail.test/settings'), {
-    77: { title: 'Docs', url: 'https://docs.test/', strategy: 'tab_lifetime' },
+  assert.equal(state.getReusableTabTitle(away, 42, 'https://mail.test/settings'), null);
+  assert.deepEqual(state.getReusableTabTitle(away, 42, 'https://mail.test/'), {
+    title: 'Inbox',
+    url: 'https://mail.test/',
+    strategy: 'same_url',
   });
-  assert.deepEqual(state.clearChangedUrlState(states, 77, 'https://other.test/'), states);
+});
+
+test('stores separate same-url titles for multiple URLs in one tab', () => {
+  const first = state.saveTabTitle({}, 42, 'Inbox', 'https://mail.test/', 'same_url');
+  const second = state.saveTabTitle(first, 42, 'Settings', 'https://mail.test/settings', 'same_url');
+
+  assert.deepEqual(state.getReusableTabTitle(second, 42, 'https://mail.test/'), {
+    title: 'Inbox',
+    url: 'https://mail.test/',
+    strategy: 'same_url',
+  });
+  assert.deepEqual(state.getReusableTabTitle(second, 42, 'https://mail.test/settings'), {
+    title: 'Settings',
+    url: 'https://mail.test/settings',
+    strategy: 'same_url',
+  });
 });

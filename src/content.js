@@ -293,6 +293,12 @@
       return true;
     }
 
+    if (message.type === 'release-title') {
+      clearTitle(false);
+      sendResponse({ ok: true });
+      return true;
+    }
+
     return false;
   });
 

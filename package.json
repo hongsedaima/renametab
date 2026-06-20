@@ -1,6 +1,6 @@
 {
   "name": "renametab",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Rename any Chrome tab title from a keyboard shortcut.",
   "private": true,
   "type": "commonjs",

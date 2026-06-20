@@ -119,11 +119,7 @@ async function applyTitleToActiveTab(title, strategyOverride) {
 
 async function getTabState(tabId, url) {
   const states = await readStates();
-  const titleState = RenameTabState.getReusableTabTitle(states, tabId, url);
-  if (!titleState && states[String(tabId)]) {
-    await writeStates(RenameTabState.clearTabTitle(states, tabId));
-  }
-  return titleState;
+  return RenameTabState.getReusableTabTitle(states, tabId, url);
 }
 
 async function handleRename(tabId, message) {
@@ -224,10 +220,11 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
 
   readStates()
     .then(async (states) => {
-      const nextStates = RenameTabState.clearChangedUrlState(states, tabId, changeInfo.url);
-      if (nextStates !== states) {
-        await writeStates(nextStates);
-        await sendTabMessage(tabId, { type: 'clear-title' }).catch(() => {});
+      const titleState = RenameTabState.getReusableTabTitle(states, tabId, changeInfo.url);
+      if (titleState && titleState.title) {
+        await sendTabMessage(tabId, { type: 'apply-title', title: titleState.title }).catch(() => {});
+      } else {
+        await sendTabMessage(tabId, { type: 'release-title' }).catch(() => {});
       }
     })
     .catch(() => {});

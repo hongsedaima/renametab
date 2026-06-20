@@ -3,7 +3,7 @@
   "name": "RenameTab",
   "short_name": "RenameTab",
   "version": "1.0.0",
-  "description": "Rename the current Chrome tab title with a keyboard shortcut.",
+  "description": "用快捷键或弹出窗口自定义当前 Chrome 标签页 title。",
   "permissions": [
     "activeTab",
     "scripting",
@@ -45,10 +45,10 @@
   "commands": {
     "rename-current-tab": {
       "suggested_key": {
-        "default": "Alt+Shift+R",
-        "mac": "MacCtrl+Shift+R"
+        "default": "Ctrl+Shift+Y",
+        "mac": "MacCtrl+Shift+Y"
       },
-      "description": "Rename current tab"
+      "description": "重命名当前标签页"
     }
   },
   "icons": {

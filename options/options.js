@@ -26,7 +26,9 @@
       return;
     }
 
-    const current = RenameTabPolicy.normalizeStrategy(response.settings && response.settings.strategy);
+    const current = RenameTabPolicy.normalizeStrategy(
+      response.settings && response.settings.strategy ? response.settings.strategy : RenameTabPolicy.DEFAULT_STRATEGY,
+    );
     const input = inputs.find((candidate) => candidate.value === current);
     if (input) input.checked = true;
   }
@@ -34,7 +36,7 @@
   async function save(value) {
     const response = await sendMessage({ type: 'save-settings', strategy: value });
     if (response.ok) {
-      setStatus('Saved');
+      setStatus('已保存');
     } else {
       setStatus(response.error);
     }

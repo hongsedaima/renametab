@@ -11,6 +11,7 @@
     UNTIL_REFRESH: 'until_refresh',
   });
 
+  const DEFAULT_STRATEGY = STRATEGIES.SAME_URL;
   const validStrategies = new Set(Object.values(STRATEGIES));
 
   function normalizeStrategy(strategy) {
@@ -41,6 +42,7 @@
 
   return {
     STRATEGIES,
+    DEFAULT_STRATEGY,
     normalizeStrategy,
     shouldStoreStrategy,
     shouldReuseTitle,

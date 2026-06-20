@@ -1,6 +1,6 @@
 # RenameTab
 
-RenameTab is a tiny Chrome extension for renaming the title of the tab you are looking at. Hit a shortcut, type a better name, press Enter, and the tab title changes in place.
+RenameTab is a tiny Chrome extension for renaming the title of the tab you are looking at. Use the popup or hit a shortcut, type a better name, press Enter, and the tab title changes in place.
 
 It is useful for dashboards, long documentation pages, staging environments, AI chats, ticket queues, and any other tab whose original title is not the name you actually use in your head.
 
@@ -26,9 +26,9 @@ It is useful for dashboards, long documentation pages, staging environments, AI 
 
 ## Usage
 
-The default shortcut is `Alt+Shift+R` on Windows/Linux and `MacCtrl+Shift+R` on macOS.
+The suggested shortcut is `Ctrl+Shift+Y` on Windows/Linux and `MacCtrl+Shift+Y` on macOS.
 
-To change it, open `chrome://extensions/shortcuts` and edit the "Rename current tab" command for RenameTab.
+Chrome may leave the shortcut blank when the key is already reserved or conflicts with another extension. To set or change it, open `chrome://extensions/shortcuts` and edit the RenameTab command.
 
 You can change the refresh strategy from the extension popup or the options page.
 

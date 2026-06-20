@@ -93,6 +93,7 @@
 
   function createOverlay(strategy) {
     removeOverlay();
+    const selectedStrategy = RenameTabPolicy.normalizeStrategy(strategy || RenameTabPolicy.DEFAULT_STRATEGY);
 
     overlayHost = document.createElement('div');
     overlayHost.id = 'renametab-overlay';
@@ -114,18 +115,23 @@
         top: 18px;
         left: 50%;
         transform: translateX(-50%);
-        width: min(560px, calc(100vw - 32px));
+        width: min(620px, calc(100vw - 32px));
         display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 8px;
-        padding: 10px;
+        gap: 10px;
+        padding: 12px;
         border: 1px solid rgba(15, 23, 42, 0.18);
         border-radius: 8px;
         background: rgba(255, 255, 255, 0.98);
         box-shadow: 0 18px 54px rgba(15, 23, 42, 0.2);
       }
 
-      input {
+      .title-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+      }
+
+      .title-input {
         min-width: 0;
         height: 38px;
         border: 1px solid #b9c3d2;
@@ -137,50 +143,110 @@
         outline: none;
       }
 
-      input:focus {
+      .title-input:focus {
         border-color: #0f766e;
         box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.18);
       }
 
-      button {
-        width: 38px;
+      .submit {
+        min-width: 72px;
         height: 38px;
         border: 0;
         border-radius: 6px;
+        padding: 0 14px;
         color: #ffffff;
         background: #0f766e;
-        font: 700 16px/1 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font: 700 14px/1 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         cursor: pointer;
       }
 
-      button:hover {
+      .submit:hover {
         background: #115e59;
+      }
+
+      fieldset {
+        display: grid;
+        gap: 6px;
+        margin: 0;
+        border: 0;
+        padding: 0;
+      }
+
+      legend {
+        margin-bottom: 2px;
+        color: #475569;
+        font: 700 12px/1.2 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      label {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 8px;
+        align-items: center;
+        min-height: 24px;
+        color: #172033;
+        font: 13px/1.25 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      input[type="radio"] {
+        accent-color: #0f766e;
       }
     `;
 
     const panel = document.createElement('form');
     panel.className = 'panel';
-    panel.setAttribute('aria-label', 'Rename tab');
+    panel.setAttribute('aria-label', '重命名标签页');
+
+    const titleRow = document.createElement('div');
+    titleRow.className = 'title-row';
 
     const input = document.createElement('input');
+    input.className = 'title-input';
     input.type = 'text';
     input.autocomplete = 'off';
     input.spellcheck = false;
-    input.placeholder = 'New tab title';
+    input.placeholder = '新 title';
     input.value = desiredTitle || document.title || '';
 
     const submit = document.createElement('button');
+    submit.className = 'submit';
     submit.type = 'submit';
-    submit.textContent = 'OK';
-    submit.setAttribute('aria-label', 'Apply title');
+    submit.textContent = '提交';
+    submit.setAttribute('aria-label', '提交新 title');
 
-    panel.append(input, submit);
+    titleRow.append(input, submit);
+
+    const scope = document.createElement('fieldset');
+    const legend = document.createElement('legend');
+    legend.textContent = '生效范围';
+    scope.append(legend);
+
+    [
+      ['same_url', '更改 URL 后恢复默认 title'],
+      ['tab_lifetime', '关闭标签页后恢复默认 title'],
+      ['until_refresh', '刷新后恢复默认 title'],
+    ].forEach(([value, labelText]) => {
+      const label = document.createElement('label');
+      const radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = 'renametab-strategy';
+      radio.value = value;
+      radio.checked = value === selectedStrategy;
+
+      const text = document.createElement('span');
+      text.textContent = labelText;
+      label.append(radio, text);
+      scope.append(label);
+    });
+
+    panel.append(titleRow, scope);
     shadow.append(style, panel);
     document.documentElement.append(overlayHost);
 
     panel.addEventListener('submit', (event) => {
       event.preventDefault();
-      commitTitle(input, strategy);
+      const checked = shadow.querySelector('input[name="renametab-strategy"]:checked');
+      commitTitle(input, checked ? checked.value : RenameTabPolicy.DEFAULT_STRATEGY);
     });
 
     input.addEventListener('keydown', (event) => {
@@ -200,7 +266,13 @@
     if (!message || typeof message.type !== 'string') return false;
 
     if (message.type === 'open-renamer') {
-      createOverlay(RenameTabPolicy.normalizeStrategy(message.strategy));
+      createOverlay(RenameTabPolicy.normalizeStrategy(message.strategy || RenameTabPolicy.DEFAULT_STRATEGY));
+      sendResponse({ ok: true });
+      return true;
+    }
+
+    if (message.type === 'apply-title') {
+      applyTitle(message.title);
       sendResponse({ ok: true });
       return true;
     }

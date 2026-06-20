@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,21 +12,27 @@
         <img src="../assets/icon32.png" alt="" width="32" height="32">
         <div>
           <h1>RenameTab</h1>
-          <p id="tab-title">Current tab</p>
+          <p id="tab-title">当前标签页</p>
         </div>
       </header>
 
-      <label for="strategy">Refresh strategy</label>
-      <select id="strategy">
-        <option value="tab_lifetime">Keep while tab stays open</option>
-        <option value="same_url">Keep while URL is unchanged</option>
-        <option value="until_refresh">Restore after refresh</option>
-      </select>
+      <form id="rename-form">
+        <label for="title">新 title</label>
+        <input id="title" type="text" autocomplete="off" spellcheck="false" placeholder="输入新的标签页标题">
 
-      <button id="rename" type="button">Rename current tab</button>
+        <label for="strategy">生效范围</label>
+        <select id="strategy">
+          <option value="same_url">更改 URL 后恢复默认 title</option>
+          <option value="tab_lifetime">关闭标签页后恢复默认 title</option>
+          <option value="until_refresh">刷新后恢复默认 title</option>
+        </select>
+
+        <button id="submit" type="submit">提交</button>
+      </form>
 
       <footer>
-        <button id="shortcuts" type="button">Shortcut settings</button>
+        <button id="open-renamer" type="button">在页面中输入</button>
+        <button id="shortcuts" type="button">快捷键设置</button>
         <span id="status" role="status"></span>
       </footer>
     </main>

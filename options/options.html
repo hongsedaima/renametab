@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>RenameTab Options</title>
+    <title>RenameTab 选项</title>
     <link rel="stylesheet" href="options.css">
   </head>
   <body>
@@ -12,36 +12,36 @@
         <img src="../assets/icon48.png" alt="" width="48" height="48">
         <div>
           <h1>RenameTab</h1>
-          <p>Default behavior for renamed tabs.</p>
+          <p>设置默认生效范围。</p>
         </div>
       </header>
 
       <section aria-labelledby="strategy-heading">
-        <h2 id="strategy-heading">Refresh strategy</h2>
-        <label>
-          <input type="radio" name="strategy" value="tab_lifetime">
-          <span>
-            <strong>Keep while tab stays open</strong>
-            <small>Reloads and navigations in the same tab reuse the custom title.</small>
-          </span>
-        </label>
+        <h2 id="strategy-heading">默认生效范围</h2>
         <label>
           <input type="radio" name="strategy" value="same_url">
           <span>
-            <strong>Keep while URL is unchanged</strong>
-            <small>Reloading the same URL keeps the title; a new URL clears it.</small>
+            <strong>更改 URL 后恢复默认 title</strong>
+            <small>刷新同一 URL 时保留；进入新 URL 后恢复页面原 title。</small>
+          </span>
+        </label>
+        <label>
+          <input type="radio" name="strategy" value="tab_lifetime">
+          <span>
+            <strong>关闭标签页后恢复默认 title</strong>
+            <small>只要当前标签页不关闭，刷新和跳转后仍尝试保留新 title。</small>
           </span>
         </label>
         <label>
           <input type="radio" name="strategy" value="until_refresh">
           <span>
-            <strong>Restore after refresh</strong>
-            <small>The custom title applies only to the current page load.</small>
+            <strong>刷新后恢复默认 title</strong>
+            <small>新 title 只在当前页面加载期间生效。</small>
           </span>
         </label>
       </section>
 
-      <button id="shortcuts" type="button">Open Chrome shortcut settings</button>
+      <button id="shortcuts" type="button">打开 Chrome 快捷键设置</button>
       <p id="status" role="status"></p>
     </main>
     <script src="../src/policy.js"></script>

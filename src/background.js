@@ -4,7 +4,7 @@ const SETTINGS_KEY = 'renameTabSettings';
 const STATES_KEY = 'renameTabStates';
 
 const defaultSettings = {
-  strategy: RenameTabPolicy.STRATEGIES.TAB_LIFETIME,
+  strategy: RenameTabPolicy.DEFAULT_STRATEGY,
 };
 
 function chromeCall(invoker) {
@@ -76,7 +76,7 @@ async function sendTabMessage(tabId, message) {
 async function openRenamerForActiveTab(strategyOverride) {
   const tab = await getActiveTab();
   if (!tab || typeof tab.id !== 'number') {
-    return { ok: false, error: 'No active tab' };
+    return { ok: false, error: '没有可操作的当前标签页' };
   }
 
   const settings = await readSettings();
@@ -85,7 +85,35 @@ async function openRenamerForActiveTab(strategyOverride) {
     await sendTabMessage(tab.id, { type: 'open-renamer', strategy });
     return { ok: true };
   } catch (error) {
-    return { ok: false, error: error.message };
+    return { ok: false, error: '当前页面不支持修改 title' };
+  }
+}
+
+async function applyTitleToActiveTab(title, strategyOverride) {
+  const tab = await getActiveTab();
+  if (!tab || typeof tab.id !== 'number') {
+    return { ok: false, error: '没有可操作的当前标签页' };
+  }
+
+  const settings = await readSettings();
+  const strategy = RenameTabPolicy.normalizeStrategy(strategyOverride || settings.strategy);
+  const nextTitle = typeof title === 'string' ? title.trim() : '';
+  const url = tab.url || '';
+
+  try {
+    if (!nextTitle) {
+      await sendTabMessage(tab.id, { type: 'clear-title' });
+      await handleClear(tab.id);
+      return { ok: true };
+    }
+
+    await sendTabMessage(tab.id, { type: 'apply-title', title: nextTitle });
+    const states = await readStates();
+    const nextStates = RenameTabState.saveTabTitle(states, tab.id, nextTitle, url, strategy);
+    await writeStates(nextStates);
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, error: '当前页面不支持修改 title' };
   }
 }
 
@@ -129,7 +157,7 @@ async function getCurrentTabInfo() {
 
 async function handleMessage(message, sender) {
   if (!message || typeof message.type !== 'string') {
-    return { ok: false, error: 'Unknown message' };
+    return { ok: false, error: '未知操作' };
   }
 
   if (message.type === 'get-settings') {
@@ -144,13 +172,17 @@ async function handleMessage(message, sender) {
     return openRenamerForActiveTab(message.strategy);
   }
 
+  if (message.type === 'apply-title-to-active-tab') {
+    return applyTitleToActiveTab(message.title, message.strategy);
+  }
+
   if (message.type === 'get-current-tab-info') {
     return getCurrentTabInfo();
   }
 
   const tabId = sender && sender.tab && sender.tab.id;
   if (typeof tabId !== 'number') {
-    return { ok: false, error: 'Missing sender tab' };
+    return { ok: false, error: '没有可操作的当前标签页' };
   }
 
   if (message.type === 'get-tab-state') {
@@ -165,7 +197,7 @@ async function handleMessage(message, sender) {
     return handleClear(tabId);
   }
 
-  return { ok: false, error: 'Unknown message' };
+  return { ok: false, error: '未知操作' };
 }
 
 chrome.commands.onCommand.addListener((command) => {

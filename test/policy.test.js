@@ -9,6 +9,10 @@ test('normalizes unknown strategies to tab lifetime', () => {
   assert.equal(policy.normalizeStrategy(undefined), 'tab_lifetime');
 });
 
+test('uses same URL as the default strategy', () => {
+  assert.equal(policy.DEFAULT_STRATEGY, 'same_url');
+});
+
 test('decides when a stored title should be reused', () => {
   assert.equal(policy.shouldReuseTitle('tab_lifetime', 'https://a.test/one', 'https://b.test/two'), true);
   assert.equal(policy.shouldReuseTitle('same_url', 'https://a.test/one', 'https://a.test/one'), true);

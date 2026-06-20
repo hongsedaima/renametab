@@ -1,0 +1,19 @@
+{
+  "name": "renametab",
+  "version": "1.0.0",
+  "description": "Rename any Chrome tab title from a keyboard shortcut.",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test",
+    "icons": "node scripts/generate-icons.mjs",
+    "package": "npm run icons && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-zip.ps1"
+  },
+  "keywords": [
+    "chrome-extension",
+    "tabs",
+    "productivity",
+    "rename-tab"
+  ],
+  "license": "MIT"
+}

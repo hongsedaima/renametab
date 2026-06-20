@@ -2,7 +2,6 @@
   const form = document.getElementById('rename-form');
   const titleInput = document.getElementById('title');
   const strategy = document.getElementById('strategy');
-  const openRenamer = document.getElementById('open-renamer');
   const shortcuts = document.getElementById('shortcuts');
   const shortcutText = document.getElementById('shortcut');
   const status = document.getElementById('status');
@@ -72,16 +71,6 @@
       return;
     }
 
-    window.close();
-  });
-
-  openRenamer.addEventListener('click', async () => {
-    await saveStrategy();
-    const response = await sendMessage({ type: 'open-renamer', strategy: strategy.value });
-    if (!response.ok) {
-      setStatus(response.error || '当前页面无法打开输入框');
-      return;
-    }
     window.close();
   });
 

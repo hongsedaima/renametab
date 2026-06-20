@@ -47,15 +47,23 @@ form {
 }
 
 .shortcut-line {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  min-height: 22px;
-  padding: 8px 10px;
+  gap: 8px;
+  min-height: 38px;
+  padding: 6px 8px 6px 10px;
   border-radius: 6px;
   color: #334155;
   background: #eaf1f8;
   font-size: 12px;
+}
+
+.shortcut-line span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .shortcut-line strong {
@@ -111,25 +119,21 @@ button {
   background: #115e59;
 }
 
-footer {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-#open-renamer,
 #shortcuts {
+  width: auto;
+  min-width: 82px;
+  min-height: 28px;
+  padding: 0 10px;
   color: #0f172a;
   background: #e2e8f0;
+  font-size: 12px;
 }
 
-#open-renamer:hover,
 #shortcuts:hover {
   background: #cbd5e1;
 }
 
 #status {
-  grid-column: 1 / -1;
   min-height: 16px;
   color: #be123c;
   font-size: 12px;

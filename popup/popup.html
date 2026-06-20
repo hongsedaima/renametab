@@ -16,7 +16,10 @@
         </div>
       </header>
 
-      <p class="shortcut-line">当前快捷键：<strong id="shortcut">读取中</strong></p>
+      <div class="shortcut-line">
+        <span>当前快捷键：<strong id="shortcut">读取中</strong></span>
+        <button id="shortcuts" type="button">快捷键设置</button>
+      </div>
 
       <form id="rename-form">
         <label for="title">新 title</label>
@@ -32,11 +35,7 @@
         <button id="submit" type="submit">提交</button>
       </form>
 
-      <footer>
-        <button id="open-renamer" type="button">在页面中输入</button>
-        <button id="shortcuts" type="button">快捷键设置</button>
-        <span id="status" role="status"></span>
-      </footer>
+      <span id="status" role="status"></span>
     </main>
     <script src="../src/policy.js"></script>
     <script src="../src/shortcut.js"></script>

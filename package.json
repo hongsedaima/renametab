@@ -7,6 +7,7 @@
   "scripts": {
     "test": "node --test",
     "icons": "node scripts/generate-icons.mjs",
+    "store-assets": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/generate-store-assets.ps1",
     "package": "npm run icons && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-zip.ps1"
   },
   "keywords": [

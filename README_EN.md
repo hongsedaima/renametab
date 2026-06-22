@@ -31,7 +31,7 @@ Use it for dashboards, documentation pages, staging environments, issue trackers
 
 Open the extension popup, type a new title, choose the persistence mode, and submit.
 
-The suggested shortcut is `Ctrl+Shift+Y` on Windows/Linux and `MacCtrl+Shift+Y` on macOS. Chrome may leave the shortcut blank if that key combination conflicts with another shortcut. To set or change it, open `chrome://extensions/shortcuts` and edit the RenameTab command.
+The default shortcut is `Alt+R` (`Option+R` on macOS). Chrome may leave the shortcut blank if that key combination conflicts with another shortcut. To set or change it, open `chrome://extensions/shortcuts` and edit the RenameTab command.
 
 Submitting an empty title clears the custom title for the current tab.
 

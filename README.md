@@ -31,6 +31,8 @@ No build step is required — the extension loads directly from source.
 4. Click **Load unpacked** (top left) and select the project folder (the one containing `manifest.json`).
 5. RenameTab appears in the list. Pin it from the toolbar puzzle icon for quick access.
 
+Once installed, rename the current tab with the default shortcut **`Alt+R`** (`Option+R` on macOS), or click the toolbar icon. If Chrome leaves the shortcut unset because of a conflict, assign it at `chrome://extensions/shortcuts`.
+
 To update later, pull the latest changes and click the **Reload** icon on the RenameTab card.
 
 ### From a packaged zip
@@ -41,7 +43,7 @@ To update later, pull the latest changes and click the **Reload** icon on the Re
 
 ## Usage
 
-The suggested shortcut is `Ctrl+Shift+Y` on Windows/Linux and `MacCtrl+Shift+Y` on macOS.
+The default shortcut is `Alt+R` (`Option+R` on macOS).
 
 Chrome may leave the shortcut blank when the key is already reserved or conflicts with another extension. To set or change it, open `chrome://extensions/shortcuts` and edit the RenameTab command.
 

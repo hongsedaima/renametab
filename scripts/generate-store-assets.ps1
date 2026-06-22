@@ -68,7 +68,7 @@ function Draw-PopupMock($graphics, $x, $y, $scale) {
   Draw-Text $graphics 'Current tab' 'Segoe UI' ([int](12 * $scale)) 'Regular' '#64748b' ($x + [int](70 * $scale)) ($y + [int](44 * $scale)) ([int](220 * $scale)) ([int](22 * $scale))
 
   Fill-RoundedRect $graphics $muted ($x + [int](18 * $scale)) ($y + [int](76 * $scale)) ([int](304 * $scale)) ([int](34 * $scale)) ([int](6 * $scale))
-  Draw-Text $graphics 'Shortcut: Ctrl+Shift+Y' 'Segoe UI' ([int](12 * $scale)) 'Bold' '#0f766e' ($x + [int](30 * $scale)) ($y + [int](84 * $scale)) ([int](180 * $scale)) ([int](20 * $scale))
+  Draw-Text $graphics 'Shortcut: Alt+R' 'Segoe UI' ([int](12 * $scale)) 'Bold' '#0f766e' ($x + [int](30 * $scale)) ($y + [int](84 * $scale)) ([int](180 * $scale)) ([int](20 * $scale))
 
   Draw-Text $graphics 'New title' 'Segoe UI' ([int](12 * $scale)) 'Bold' '#334155' ($x + [int](18 * $scale)) ($y + [int](126 * $scale)) ([int](260 * $scale)) ([int](20 * $scale))
   Fill-RoundedRect $graphics (New-Brush '#ffffff') ($x + [int](18 * $scale)) ($y + [int](150 * $scale)) ([int](304 * $scale)) ([int](38 * $scale)) ([int](6 * $scale))

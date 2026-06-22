@@ -10,7 +10,11 @@
   }
 
   function sameUrlKey(tabId, url) {
-    return `same-url:${tabId}:${String(url || '')}`;
+    return `same-url:${tabId}:${policy.normalizeUrlForMatch(url)}`;
+  }
+
+  function sameUrlGlobalKey(url) {
+    return `same-url-global:${policy.normalizeUrlForMatch(url)}`;
   }
 
   function sameUrlPrefix(tabId) {
@@ -27,6 +31,14 @@
 
     if (typeof url === 'string') {
       delete next[sameUrlKey(tabId, url)];
+      delete next[sameUrlGlobalKey(url)];
+      const prefix = sameUrlPrefix(tabId);
+      Object.keys(next).forEach((key) => {
+        const titleState = next[key];
+        if (key.startsWith(prefix) && titleState && policy.shouldReuseTitle(titleState.strategy, titleState.url, url)) {
+          delete next[key];
+        }
+      });
       return next;
     }
 
@@ -47,9 +59,10 @@
     }
 
     if (normalized === policy.STRATEGIES.SAME_URL) {
-      delete next[tabKey(tabId)];
-      next[sameUrlKey(tabId, url)] = titleState;
-      return next;
+      const cleaned = removeTabEntries(next, tabId, url);
+      cleaned[sameUrlKey(tabId, url)] = titleState;
+      cleaned[sameUrlGlobalKey(url)] = titleState;
+      return cleaned;
     }
 
     next[tabKey(tabId)] = titleState;
@@ -69,6 +82,18 @@
     const sameUrlTitleState = states && states[sameUrlKey(tabId, currentUrl)];
     if (sameUrlTitleState) return sameUrlTitleState;
 
+    const sameUrlGlobalTitleState = states && states[sameUrlGlobalKey(currentUrl)];
+    if (sameUrlGlobalTitleState && policy.shouldReuseTitle(sameUrlGlobalTitleState.strategy, sameUrlGlobalTitleState.url, currentUrl)) {
+      return sameUrlGlobalTitleState;
+    }
+
+    const prefix = sameUrlPrefix(tabId);
+    const legacySameUrlKey = Object.keys(states || {}).find((key) => {
+      const titleState = states[key];
+      return key.startsWith(prefix) && titleState && policy.shouldReuseTitle(titleState.strategy, titleState.url, currentUrl);
+    });
+    if (legacySameUrlKey) return states[legacySameUrlKey];
+
     const titleState = tabTitleState;
     if (!titleState) return null;
 
@@ -79,10 +104,30 @@
     return states || {};
   }
 
+  function pruneClosedTabStates(states, openTabIds) {
+    const next = cloneStates(states);
+    const openIds = new Set((openTabIds || []).map((tabId) => String(tabId)));
+
+    Object.keys(next).forEach((key) => {
+      if (key.startsWith('same-url-global:')) return;
+
+      const tabId = key.startsWith('same-url:')
+        ? key.slice('same-url:'.length).split(':')[0]
+        : key;
+
+      if (!openIds.has(tabId)) {
+        delete next[key];
+      }
+    });
+
+    return next;
+  }
+
   return {
     saveTabTitle,
     clearTabTitle,
     getReusableTabTitle,
     clearChangedUrlState,
+    pruneClosedTabStates,
   };
 });

@@ -25,8 +25,19 @@
   function shouldReuseTitle(strategy, storedUrl, currentUrl) {
     const normalized = normalizeStrategy(strategy);
     if (normalized === STRATEGIES.TAB_LIFETIME) return true;
-    if (normalized === STRATEGIES.SAME_URL) return storedUrl === currentUrl;
+    if (normalized === STRATEGIES.SAME_URL) return normalizeUrlForMatch(storedUrl) === normalizeUrlForMatch(currentUrl);
     return false;
+  }
+
+  function normalizeUrlForMatch(url) {
+    const rawUrl = String(url || '');
+    try {
+      const parsedUrl = new URL(rawUrl);
+      parsedUrl.search = parsedUrl.searchParams.toString();
+      return parsedUrl.href;
+    } catch (error) {
+      return rawUrl;
+    }
   }
 
   function createTitleState(title, url, strategy) {
@@ -44,6 +55,7 @@
     STRATEGIES,
     DEFAULT_STRATEGY,
     normalizeStrategy,
+    normalizeUrlForMatch,
     shouldStoreStrategy,
     shouldReuseTitle,
     createTitleState,

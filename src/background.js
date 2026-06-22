@@ -2,6 +2,7 @@ importScripts('policy.js', 'state.js');
 
 const SETTINGS_KEY = 'renameTabSettings';
 const STATES_KEY = 'renameTabStates';
+const STATES_AREA = 'local';
 
 const defaultSettings = {
   strategy: RenameTabPolicy.DEFAULT_STRATEGY,
@@ -44,12 +45,12 @@ async function writeSettings(settings) {
 }
 
 async function readStates() {
-  const result = await storageGet('session', { [STATES_KEY]: {} });
+  const result = await storageGet(STATES_AREA, { [STATES_KEY]: {} });
   return result[STATES_KEY] || {};
 }
 
 async function writeStates(states) {
-  await storageSet('session', { [STATES_KEY]: states || {} });
+  await storageSet(STATES_AREA, { [STATES_KEY]: states || {} });
 }
 
 async function getActiveTab() {
@@ -151,6 +152,15 @@ async function getCurrentTabInfo() {
   };
 }
 
+async function pruneClosedTabsFromState() {
+  const tabs = await chromeCall((done) => chrome.tabs.query({}, done));
+  const openTabIds = (tabs || [])
+    .map((tab) => tab.id)
+    .filter((tabId) => typeof tabId === 'number');
+  const states = await readStates();
+  await writeStates(RenameTabState.pruneClosedTabStates(states, openTabIds));
+}
+
 async function handleMessage(message, sender) {
   if (!message || typeof message.type !== 'string') {
     return { ok: false, error: '未知操作' };
@@ -229,3 +239,5 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
     })
     .catch(() => {});
 });
+
+pruneClosedTabsFromState().catch(() => {});

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "RenameTab",
   "short_name": "RenameTab",
-  "version": "1.0.1",
+  "version": "1.0.7",
   "description": "用快捷键或弹出窗口自定义当前 Chrome 标签页 title。",
   "permissions": [
     "activeTab",

@@ -6,16 +6,65 @@
   let originalTitle = null;
   let titleObserver = null;
   let overlayHost = null;
+  let lastKnownUrl = location.href;
+  const sharedPolicy = typeof RenameTabPolicy !== 'undefined'
+    ? RenameTabPolicy
+    : {
+      DEFAULT_STRATEGY: 'same_url',
+      normalizeStrategy(strategy) {
+        return ['same_url', 'tab_lifetime', 'until_refresh'].includes(strategy) ? strategy : 'same_url';
+      },
+    };
+  const sharedUi = typeof RenameTabUi !== 'undefined'
+    ? RenameTabUi
+    : {
+      NEW_TITLE_PLACEHOLDER: '输入新的标签页标题',
+      focusTitleInput(input) {
+        if (input && typeof input.focus === 'function') input.focus();
+      },
+      installUrlChangeListener(targetWindow, onChange) {
+        if (!targetWindow || typeof targetWindow.addEventListener !== 'function') return;
+        targetWindow.addEventListener('popstate', () => onChange(location.href));
+        targetWindow.addEventListener('hashchange', () => onChange(location.href));
+      },
+    };
 
   function sendMessage(message) {
     return new Promise((resolve) => {
-      chrome.runtime.sendMessage(message, (response) => {
-        if (chrome.runtime.lastError) {
-          resolve({ ok: false, error: chrome.runtime.lastError.message });
-          return;
+      let resolved = false;
+      const resolveOnce = (response) => {
+        if (resolved) return;
+        resolved = true;
+        resolve(response);
+      };
+      const resolveError = (error) => {
+        resolveOnce({ ok: false, error: error && error.message ? error.message : String(error) });
+      };
+
+      try {
+        const maybePromise = chrome.runtime.sendMessage(message, (response) => {
+          let lastError = null;
+          try {
+            lastError = chrome.runtime.lastError;
+          } catch (error) {
+            resolveError(error);
+            return;
+          }
+
+          if (lastError) {
+            resolveError(lastError);
+            return;
+          }
+
+          resolveOnce(response || { ok: true });
+        });
+
+        if (maybePromise && typeof maybePromise.catch === 'function') {
+          maybePromise.catch(resolveError);
         }
-        resolve(response || { ok: true });
-      });
+      } catch (error) {
+        resolveError(error);
+      }
     });
   }
 
@@ -26,9 +75,17 @@
     }
   }
 
+  function checkUrlChange() {
+    if (location.href === lastKnownUrl) return false;
+    handleUrlChange(location.href);
+    return true;
+  }
+
   function keepTitleLocked() {
     disconnectObserver();
     titleObserver = new MutationObserver(() => {
+      if (checkUrlChange()) return;
+
       if (desiredTitle && document.title !== desiredTitle) {
         document.title = desiredTitle;
       }
@@ -65,6 +122,26 @@
     originalTitle = null;
   }
 
+  async function syncTitleForUrl(url) {
+    const requestedUrl = url || location.href;
+    const response = await sendMessage({ type: 'get-tab-state', url: requestedUrl });
+    if (requestedUrl !== location.href) return;
+
+    if (response && response.ok && response.state && response.state.title) {
+      applyTitle(response.state.title);
+      return;
+    }
+
+    clearTitle(false);
+  }
+
+  function handleUrlChange(url) {
+    if (url === lastKnownUrl) return;
+    lastKnownUrl = url;
+    clearTitle(false);
+    syncTitleForUrl(url);
+  }
+
   function removeOverlay() {
     if (overlayHost) {
       overlayHost.remove();
@@ -93,7 +170,7 @@
 
   function createOverlay(strategy) {
     removeOverlay();
-    const selectedStrategy = RenameTabPolicy.normalizeStrategy(strategy || RenameTabPolicy.DEFAULT_STRATEGY);
+    const selectedStrategy = sharedPolicy.normalizeStrategy(strategy || sharedPolicy.DEFAULT_STRATEGY);
 
     overlayHost = document.createElement('div');
     overlayHost.id = 'renametab-overlay';
@@ -214,7 +291,7 @@
     input.type = 'text';
     input.autocomplete = 'off';
     input.spellcheck = false;
-    input.placeholder = RenameTabUi.NEW_TITLE_PLACEHOLDER;
+    input.placeholder = sharedUi.NEW_TITLE_PLACEHOLDER;
     input.value = '';
 
     const submit = document.createElement('button');
@@ -257,7 +334,7 @@
     panel.addEventListener('submit', (event) => {
       event.preventDefault();
       const checked = shadow.querySelector('input[name="renametab-strategy"]:checked');
-      commitTitle(input, checked ? checked.value : RenameTabPolicy.DEFAULT_STRATEGY);
+      commitTitle(input, checked ? checked.value : sharedPolicy.DEFAULT_STRATEGY);
     });
 
     input.addEventListener('keydown', (event) => {
@@ -267,16 +344,14 @@
       }
     });
 
-    requestAnimationFrame(() => {
-      input.focus();
-    });
+    sharedUi.focusTitleInput(input);
   }
 
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (!message || typeof message.type !== 'string') return false;
 
     if (message.type === 'open-renamer') {
-      createOverlay(RenameTabPolicy.normalizeStrategy(message.strategy || RenameTabPolicy.DEFAULT_STRATEGY));
+      createOverlay(sharedPolicy.normalizeStrategy(message.strategy || sharedPolicy.DEFAULT_STRATEGY));
       sendResponse({ ok: true });
       return true;
     }
@@ -302,9 +377,6 @@
     return false;
   });
 
-  sendMessage({ type: 'get-tab-state', url: location.href }).then((response) => {
-    if (response && response.ok && response.state && response.state.title) {
-      applyTitle(response.state.title);
-    }
-  });
+  sharedUi.installUrlChangeListener(window, handleUrlChange);
+  syncTitleForUrl(location.href);
 })();

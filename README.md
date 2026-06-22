@@ -1,5 +1,7 @@
 # RenameTab
 
+[English](README.md) · [中文](README_CN.md)
+
 RenameTab is a tiny Chrome extension for renaming the title of the tab you are looking at. Use the popup or hit a shortcut, type a better name, press Enter, and the tab title changes in place.
 
 It is useful for dashboards, long documentation pages, staging environments, AI chats, ticket queues, and any other tab whose original title is not the name you actually use in your head.
@@ -17,12 +19,25 @@ It is useful for dashboards, long documentation pages, staging environments, AI 
 | Keep while URL is unchanged | The custom title stays for reloads of the same exact URL and clears on URL change. |
 | Restore after refresh | The custom title applies only to the current page load. |
 
-## Install From Zip
+## Install
 
-1. Build or download `dist/RenameTab.zip`.
-2. Open `chrome://extensions`.
-3. Enable Developer mode.
-4. Drag `dist/RenameTab.zip` onto the page. If your Chrome build asks for an unpacked extension, unzip it and choose the extracted folder with "Load unpacked".
+### Load unpacked (recommended for local use)
+
+No build step is required — the extension loads directly from source.
+
+1. Clone or download this repository.
+2. Open `chrome://extensions` in Chrome.
+3. Turn on **Developer mode** (top right).
+4. Click **Load unpacked** (top left) and select the project folder (the one containing `manifest.json`).
+5. RenameTab appears in the list. Pin it from the toolbar puzzle icon for quick access.
+
+To update later, pull the latest changes and click the **Reload** icon on the RenameTab card.
+
+### From a packaged zip
+
+1. Build the zip with `npm run package` (creates `dist/RenameTab.zip`).
+2. Open `chrome://extensions` and enable **Developer mode**.
+3. Drag `dist/RenameTab.zip` onto the page. If your Chrome build rejects a zipped extension, unzip it and use **Load unpacked** on the extracted folder.
 
 ## Usage
 
